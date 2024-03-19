@@ -1,5 +1,6 @@
 ﻿using Netcode;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 
@@ -10,7 +11,7 @@ internal sealed class ModEntry : Mod
 	private ModConfig _config;
 
 	private IReflectedField<NetBool>? _landslide;
-	
+
 	public override void Entry(IModHelper helper)
 	{
 		_config = helper.ReadConfig<ModConfig>();
@@ -92,7 +93,7 @@ internal sealed class ModEntry : Mod
 		{
 			return;
 		}
-		
+
 		if (_landslide == null)
 		{
 			_landslide = Helper.Reflection.GetField<NetBool>(
@@ -102,7 +103,21 @@ internal sealed class ModEntry : Mod
 		_landslide.SetValue(new NetBool(false));
 	}
 
-	private static void SkipIntroductionQuest()
+	private IEnumerable<string> GetIntroductionQuestCharacters()
+	{
+		return Game1.characterData.Where(pair =>
+		{
+			var characterData = pair.Value;
+			if (characterData.IntroductionsQuest == false)
+			{
+				return false;
+			}
+
+			return characterData.HomeRegion == "Town";
+		}).Select(pair => pair.Key);
+	}
+
+	private void SkipIntroductionQuest()
 	{
 		if (!Game1.player.hasQuest("9"))
 		{
@@ -111,25 +126,21 @@ internal sealed class ModEntry : Mod
 
 		Game1.player.completeQuest("9");
 
-		foreach (var npc in Utility.getAllCharacters())
+		foreach (var character in GetIntroductionQuestCharacters())
 		{
-			if (!npc.CanSocialize)
+			if (Game1.player.hasPlayerTalkedToNPC(character))
 			{
 				continue;
 			}
 
-			if (Game1.player.friendshipData.ContainsKey(npc.Name))
+			if (Game1.player.friendshipData.TryGetValue(character, out _))
 			{
 				continue;
 			}
 
-			if (Game1.player.friendshipData.TryGetValue(npc.Name, out _))
-			{
-				continue;
-			}
-			
 			var friendship = new Friendship();
-			Game1.player.friendshipData.Add(npc.Name, friendship);
+
+			Game1.player.friendshipData.Add(character, friendship);
 		}
 	}
 
