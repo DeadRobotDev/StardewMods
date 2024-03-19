@@ -103,7 +103,7 @@ internal sealed class ModEntry : Mod
 		_landslide.SetValue(new NetBool(false));
 	}
 
-	private IEnumerable<string> GetIntroductionQuestCharacters()
+	private static IEnumerable<string> GetIntroductionQuestCharacters()
 	{
 		return Game1.characterData.Where(pair =>
 		{
@@ -117,7 +117,7 @@ internal sealed class ModEntry : Mod
 		}).Select(pair => pair.Key);
 	}
 
-	private void SkipIntroductionQuest()
+	private static void SkipIntroductionQuest()
 	{
 		if (!Game1.player.hasQuest("9"))
 		{
