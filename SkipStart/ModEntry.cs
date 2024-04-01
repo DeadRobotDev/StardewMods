@@ -25,7 +25,7 @@ internal sealed class ModEntry : Mod
 		}
 	}
 
-	private void GameLoop_SaveLoaded(object? sender, StardewModdingAPI.Events.SaveLoadedEventArgs e)
+	private void GameLoop_SaveLoaded(object? sender, SaveLoadedEventArgs e)
 	{
 		if (_config.IntroductionQuestSkip)
 		{
@@ -48,7 +48,7 @@ internal sealed class ModEntry : Mod
 		}
 	}
 
-	private void GameLoop_DayStarted(object? sender, StardewModdingAPI.Events.DayStartedEventArgs e)
+	private void GameLoop_DayStarted(object? sender, DayStartedEventArgs e)
 	{
 		if (SDate.Now() > new SDate(5, "spring", 1))
 		{
@@ -87,7 +87,7 @@ internal sealed class ModEntry : Mod
 		}
 	}
 
-	private void Player_Warped(object? sender, StardewModdingAPI.Events.WarpedEventArgs e)
+	private void Player_Warped(object? sender, WarpedEventArgs e)
 	{
 		if (e.NewLocation.Name != "Mountain")
 		{
